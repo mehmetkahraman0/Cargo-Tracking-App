@@ -4,3 +4,8 @@ export interface Product {
     serialNo?: string,
     fotoUrl?: string
 }
+
+export interface SelectedProductList {
+    product: Product,
+    piece: string
+}

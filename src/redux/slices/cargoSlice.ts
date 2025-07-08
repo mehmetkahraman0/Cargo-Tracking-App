@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import type { Cargo } from "../../models/Cargo"
 import supabase from "../../lib/supabaseClient";
 
-
 interface CargoState {
     addedError: undefined | string,
     addedLoading: boolean,
@@ -15,8 +14,7 @@ interface CargoState {
     cargos: Cargo[]
 }
 
-
-const initialState : CargoState = {
+const initialState: CargoState = {
     addedError: undefined,
     addedLoading: false,
     addedCargo: {},
@@ -28,27 +26,29 @@ const initialState : CargoState = {
     cargos: []
 }
 
-export const addCargo = createAsyncThunk("cargo/addCargo", async (cargo: Cargo) => {
-    const { data, error } = await supabase.from("cargo").insert(cargo).select().single()
-    if (error) throw error
-    return data
-}
+export const createCargo = createAsyncThunk("cargo/addCargo",
+    async (cargo: Cargo) => {
+        const { data, error } = await supabase.from("cargo").insert(cargo).select().single()
+        if (error) throw error
+        return data
+    }
 )
 
-export const getCargo = createAsyncThunk<Cargo[]>("product/getCargo", async () => {
-    const { data: cargos, error } = await supabase.from("cargo").select("*")
-    if (error) throw error.message
-    return cargos
-}
+export const getCargo = createAsyncThunk<Cargo[]>("product/getCargo",
+    async () => {
+        const { data: cargos, error } = await supabase.from("cargo").select("*")
+        if (error) throw error.message
+        return cargos
+    }
 )
 
-export const changeStatus = createAsyncThunk<Cargo, string>("product/deleteProduct", async (id, status) => {
-    const { data: products, error } = await supabase.from("product").update({ "status": status }).eq("id", id).select().single()
-    if (error) throw error.message
-    return products
-}
+export const changeStatus = createAsyncThunk<Cargo, string>("product/deleteProduct",
+    async (id, status) => {
+        const { data: products, error } = await supabase.from("product").update({ "status": status }).eq("id", id).select().single()
+        if (error) throw error.message
+        return products
+    }
 )
-
 
 const cargoSlice = createSlice({
     name: "product",
@@ -56,14 +56,14 @@ const cargoSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(addCargo.pending, state => {
+            .addCase(createCargo.pending, state => {
                 state.addedLoading = true
             })
-            .addCase(addCargo.fulfilled, (state, action) => {
+            .addCase(createCargo.fulfilled, (state, action) => {
                 state.addedLoading = false
                 state.addedCargo = action.payload
             })
-            .addCase(addCargo.rejected, (state, action) => {
+            .addCase(createCargo.rejected, (state, action) => {
                 state.addedError = action.error.message
                 state.addedLoading = false
             })

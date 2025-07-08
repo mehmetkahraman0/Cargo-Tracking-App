@@ -43,9 +43,9 @@ export const getProduct = createAsyncThunk<Product[]>("product/getProduct", asyn
 )
 
 export const deleteProduct = createAsyncThunk<Product, string>("product/deleteProduct", async (id) => {
-    const { data: products, error } = await supabase.from("product").delete().eq("id", id).single()
+    const { data: product, error } = await supabase.from("product").delete().eq("id", id).single()
     if (error) throw error.message
-    return products
+    return product
 }
 )
 
@@ -70,7 +70,7 @@ const productSlice = createSlice({
                 state.getLoading = true
             })
             .addCase(getProduct.fulfilled, (state, action) => {
-                state.deletedLoading = false
+                state.getLoading = false
                 state.products = action.payload
             })
             .addCase(getProduct.rejected, (state, action) => {
