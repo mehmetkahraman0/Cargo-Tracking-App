@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from "../redux/store"
 import { useEffect, useState } from "react"
 import { createCargo } from "../redux/slices/cargoSlice"
 import type { Product, SelectedProductList } from "../models/Product"
-import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md"
+import { MdOutlineKeyboardDoubleArrowDown, MdDeleteOutline } from 'react-icons/md';
 import { getProduct } from "../redux/slices/productSlice"
 
 const CreateCargoPage = () => {
@@ -12,7 +12,7 @@ const CreateCargoPage = () => {
   console.log(createdCargo)
   const products = useSelector((state: RootState) => state.product.products)
   const [cargoName, setCargoName] = useState("")
-  const [status, setStatus] = useState("Draft")
+  const [status, setStatus] = useState("No Company")
   let created_at: string
   const [recipientList, setRecipientList] = useState<string[]>([])
   const [recipient, setRecipient] = useState("")
@@ -34,7 +34,7 @@ const CreateCargoPage = () => {
     }
     created_at = new Date().toISOString()
     if (status != "Draft" && status != "Getting Ready") {
-      cargoTrackingCode = `KARGO-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+      cargoTrackingCode = `${Date.now()}-${Math.floor(Math.random() * 1000)}`
     }
     dispatch(createCargo({ cargoName, status, created_at, product: selectedProductList, recipient: recipientList, everoneRecipient, cargoCompany, cargoTrackingCode })).unwrap()
   }
@@ -55,6 +55,15 @@ const CreateCargoPage = () => {
     setRecipient("")
   }
 
+  const deleteRecipientHandler = (item: string) => {
+    const updatedRecipients = recipientList.filter((reci) => reci != item)
+    setRecipientList(updatedRecipients)
+  }
+
+  const deleteSelectedProductHandler = (item: SelectedProductList) => {
+    const updatedSelectedProduct = selectedProductList.filter((product) => item != product)
+    setSelectedProductList(updatedSelectedProduct)
+  }
 
   useEffect(() => {
     dispatch(getProduct()).unwrap()
@@ -69,7 +78,7 @@ const CreateCargoPage = () => {
         </div>
         <div className="flex flex-col justify-between">
           <label className="text-[14px] font-medium" htmlFor="">Corgo Name</label>
-          <input className="border p-1 rounded-sm text-[14px]" type="text" onChange={(e) => setCargoName(e.target.value)} placeholder="Enter Cargo Name"/>
+          <input className="border p-1 rounded-sm text-[14px]" type="text" onChange={(e) => setCargoName(e.target.value)} placeholder="Enter Cargo Name" />
         </div>
         <div className="flex flex-col">
           <label className="text-[14px] font-medium" htmlFor="">Cargo Status</label>
@@ -84,13 +93,16 @@ const CreateCargoPage = () => {
         </div>
         <div className="w-full relative">
           <div>
-            <p className="flex flex-row items-center justify-between hover:bg-gray-100 py-2 rounded-sm text-[14px] font-medium">Select Product <MdOutlineKeyboardDoubleArrowDown /></p>
+            <p className="flex flex-row items-center justify-between text-[14px] font-medium">Select Product <MdOutlineKeyboardDoubleArrowDown /></p>
             {selectedProductList.map((item, index) => (
               <div className="">
                 <hr />
                 <div className="flex flex-row justify-between items-center">
-                  <p key={index} className="flex flex-row  items-center justify-between hover:bg-gray-100 py-2 px-1 rounded-sm text-[14px]">{item.product.serialNo} -- {item.product.productName}</p>
-                  <p className="text-[12px]">Piece : {item.piece}</p>
+                  <div className="flex flex-row  items-center gap-8">
+                    <p key={index} className=" hover:bg-gray-100 py-2 px-1 rounded-sm text-[14px]">{item.product.serialNo} -- {item.product.productName}</p>
+                    <p className="text-[12px]">Piece : {item.piece}</p>
+                  </div>
+                  <p className="cursor-pointer hover:text-red-500 text-[18px]" onClick={() => deleteSelectedProductHandler(item)}><MdDeleteOutline /></p>
                 </div>
               </div>
             ))}
@@ -111,13 +123,19 @@ const CreateCargoPage = () => {
                 </div>
               ))}
             </div>
-            : ""
+            : <div className="hidden"></div>
           }
         </div>
         <div className="relative w-full">
           <label className="text-[14px] font-medium" htmlFor="">Cargo Recipient</label>
           {recipientList.map((item, index) => (
-            <p className="text-[12px]" key={index}>-- {item}</p>
+            <div>
+              <hr />
+              <div className="flex flex-row justify-between items-center py-2">
+                <p className="text-[12px]" key={index}>{index+1}.Name -- {item}</p>
+                <p className="cursor-pointer hover:text-red-500 text-[18px]" onClick={() => deleteRecipientHandler(item)}><MdDeleteOutline /></p>
+              </div>
+            </div>
           ))}
           <input className="w-full border p-1 rounded-sm text-[14px]" type="text" value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder="Enter Cargo Recipient" />
           <button className="absolute right-1 bottom-[4px] text-[14px] border rounded-md px-2 bg-gray-100" onClick={() => addRecipientHandler()}>Add</button>

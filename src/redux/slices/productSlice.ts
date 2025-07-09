@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import supabase from "../../lib/supabaseClient";
 import { type Product } from '../../models/Product';
-import { convertFileToBase64 } from "../../functions/convertBase64";
 
 interface ProductState {
     addedError: undefined | string,
@@ -27,9 +26,9 @@ const initialState: ProductState = {
     products: [],
 }
 
-export const addProduct = createAsyncThunk("product/addProduct", async ({ productName, serialNo, file }: { productName: string, serialNo: string, file: File }) => {
-    const fotoUrl = await convertFileToBase64(file)
-    const { data, error } = await supabase.from("product").insert({ productName, serialNo, fotoUrl }).select().single()
+export const addProduct = createAsyncThunk("product/addProduct", async ({ productName, serialNo, file }: { productName: string, serialNo: string, file: string }) => {
+    const { data, error } = await supabase.from("product").insert({ productName, serialNo, file }).select().single()
+    console.log(data)
     if (error) throw error
     return data
 }

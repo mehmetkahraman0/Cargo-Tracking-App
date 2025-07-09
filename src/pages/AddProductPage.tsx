@@ -2,6 +2,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { type AppDispatch, type RootState } from "../redux/store"
 import { useState } from "react"
 import { addProduct } from "../redux/slices/productSlice"
+import { convertFileToBase64 } from "../functions/convertBase64"
+import ExcelImport from "../components/Excelımport"
 
 const AddProductPage = () => {
     const products = useSelector((state: RootState) => state.product.addedProduct)
@@ -10,8 +12,8 @@ const AddProductPage = () => {
     const [productName, setProductName] = useState<string>("")
     const [serialNo, setSerialNo] = useState<string>("")
     const [file, setFile] = useState<File | undefined>()
-    
-    const handleSave = () => {
+
+    const handleSave = async () => {
         if (!file) {
             alert("file nesnesi yok")
             return
@@ -22,8 +24,8 @@ const AddProductPage = () => {
             alert("seçilen dosya png, jpeg, jpg formatında olabilir")
             return
         }
-        setFile(file)
-        dispatch(addProduct({ productName, serialNo, file })).unwrap()
+        const base64Convert = await convertFileToBase64(file)
+        dispatch(addProduct({ productName, serialNo, file: base64Convert })).unwrap()
     }
 
     return (
@@ -33,6 +35,9 @@ const AddProductPage = () => {
                     <p className="font-semibold text-[18px]">Add Product</p>
                     <hr className="text-blue-500" />
                 </div>
+                <hr />
+                <ExcelImport />
+                <hr />
                 <input className="border p-1 rounded-sm text-[14px]" type="text" placeholder="Enter Product Name" onChange={(e) => setProductName(e.target.value)} />
                 <input className="border p-1 rounded-sm text-[14px]" type="text" placeholder="Serial No" onChange={(e) => setSerialNo(e.target.value)} />
                 <input type="file" onChange={(e) => setFile(e.target.files?.[0])} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-1 file:rounded file:border-0 file:text-[12px] file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-300" />

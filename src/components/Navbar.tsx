@@ -12,7 +12,7 @@ const Navbar = () => {
 
 
   return (
-    <div className="bg-gray-100 h-screen">
+    <div className="bg-gray-100 h-full">
       <button onClick={() => setOpenMenü(true)} className="text-[30px] p-1 pt-4 lg:hidden"><RiMenuFold2Line /></button>
       <div className={`fixed top-0 left-0 z-50 w-[320px] bg-gray-100 transition-transform duration-300 ease-in-out ${isOpenMenü ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block`}>
         <div className="w-[320px] h-[100vh] p-4 bg-gray-100">

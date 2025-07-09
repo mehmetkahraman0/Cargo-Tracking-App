@@ -2,7 +2,7 @@ export interface Product {
     id?: string,
     productName?: string,
     serialNo?: string,
-    fotoUrl?: string
+    file?: string
 }
 
 export interface SelectedProductList {

@@ -19,12 +19,12 @@ const ProductListPage = () => {
   const columns: TableColumnsType<Product> = [
     {
       title: 'Image',
-      dataIndex: 'fotoUrl',
-      key: 'fotoUrl',
-      render: (fotoUrl: string) =>
+      dataIndex: 'file',
+      key: 'file',
+      render: (file: string) =>
         <Image
           height={90}
-          src={fotoUrl}
+          src={file}
           alt="Ürün Fotoğrafı"
           style={{ objectFit: 'cover' }}
         />
@@ -50,8 +50,6 @@ const ProductListPage = () => {
       ),
     },
   ];
-
-//product tarafına update kısmı eklenicek sonradan 
 
   const handleDelete = (product: Product) => {
     if (product.id) {

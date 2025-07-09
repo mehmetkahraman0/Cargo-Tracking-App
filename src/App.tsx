@@ -4,16 +4,20 @@ import CreateCargoPage from "./pages/CreateCargoPage"
 import AddProductPage from "./pages/AddProductPage"
 import ProductListPage from "./pages/ProductListPage"
 import CargoListPage from "./pages/CargoListPage"
+import CargoPage from "./pages/CargoPage"
+import Deneme from "./pages/Deneme"
 
 function App() {
   return (
     <div className="flex flex-row justify-between">
       <Navbar />
       <Routes>
+        <Route path="/" element={<Deneme />} />
         <Route path="/product-add" element={<AddProductPage />} />
         <Route path="/product-list" element={<ProductListPage />} />
         <Route path="/cargo-create" element={<CreateCargoPage />} />
         <Route path="/cargo-list" element={<CargoListPage />} />
+        <Route path="/cargo/:id" element={<CargoPage />} />
       </Routes>
     </div>
   )
