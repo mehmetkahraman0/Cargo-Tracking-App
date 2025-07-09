@@ -12,6 +12,7 @@ interface CargoState {
     getError: undefined | string
     getLoading: boolean
     cargos: Cargo[]
+    deletedCargo: undefined | Cargo
 }
 
 const initialState: CargoState = {
@@ -23,7 +24,9 @@ const initialState: CargoState = {
     changedCargo: {},
     getError: undefined,
     getLoading: false,
-    cargos: []
+    cargos: [],
+    deletedCargo: undefined
+
 }
 
 export const createCargo = createAsyncThunk("cargo/addCargo",
@@ -34,7 +37,7 @@ export const createCargo = createAsyncThunk("cargo/addCargo",
     }
 )
 
-export const getCargo = createAsyncThunk<Cargo[]>("product/getCargo",
+export const getCargo = createAsyncThunk<Cargo[]>("cargo/getCargo",
     async () => {
         const { data: cargos, error } = await supabase.from("cargo").select("*")
         if (error) throw error.message
@@ -42,11 +45,19 @@ export const getCargo = createAsyncThunk<Cargo[]>("product/getCargo",
     }
 )
 
-export const changeStatus = createAsyncThunk<Cargo, string>("product/deleteProduct",
-    async (id, status) => {
-        const { data: products, error } = await supabase.from("product").update({ "status": status }).eq("id", id).select().single()
+export const updateCargo = createAsyncThunk<Cargo, { id: string, cargo: Partial<Cargo> }>("cargo/updateCargo",
+    async ({ id, cargo }) => {
+        const { data: products, error } = await supabase.from("cargo").update(cargo).eq("id", id).select().single()
         if (error) throw error.message
         return products
+    }
+)
+
+export const deleteCargo = createAsyncThunk<Cargo, { id: string }>("cargo/deleteCargo",
+    async ({ id }) => {
+        const { data: cargo, error } = await supabase.from("cargo").delete().eq("id", id).single()
+        if (error) throw error.message
+        return cargo
     }
 )
 
@@ -78,16 +89,19 @@ const cargoSlice = createSlice({
                 state.getError = action.error.message
                 state.getLoading = false
             })
-            .addCase(changeStatus.pending, state => {
+            .addCase(updateCargo.pending, state => {
                 state.changedLoading = true
             })
-            .addCase(changeStatus.fulfilled, (state, action) => {
+            .addCase(updateCargo.fulfilled, (state, action) => {
                 state.changedLoading = false
                 state.changedCargo = action.payload
             })
-            .addCase(changeStatus.rejected, (state, action) => {
+            .addCase(updateCargo.rejected, (state, action) => {
                 state.changedError = action.error.message
                 state.changedLoading = false
+            })
+            .addCase(deleteCargo.fulfilled, (state, action) => {
+                state.deletedCargo = action.payload
             })
     }
 })

@@ -11,10 +11,6 @@ const ProductListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.product.products);
   const getLoading = useSelector((state: RootState) => state.product.getLoading)
-  console.log(getLoading)
-  useEffect(() => {
-    dispatch(getProduct()).unwrap();
-  }, [dispatch]);
 
   const columns: TableColumnsType<Product> = [
     {
@@ -44,21 +40,27 @@ const ProductListPage = () => {
       key: 'actions',
       render: (_: any, record: Product) => (
         <div className='flex gap-8'>
-          <button className="text-yellow-600 text-[18px] "><MdSystemUpdateAlt /></button> 
+          <button className="text-yellow-600 text-[18px] "><MdSystemUpdateAlt /></button>
           <button onClick={() => handleDelete(record)} className="text-red-700 text-[18px]"> <MdDeleteOutline /></button>
         </div>
       ),
     },
   ];
 
-  const handleDelete = (product: Product) => {
-    if (product.id) {
-      dispatch(deleteProduct(product.id)).unwrap()
-      alert(`${product.productName} silindi !!`)
+  const handleDelete = async (product: Product) => {
+    try {
+      if (product.id) {
+        await dispatch(deleteProduct(product.id)).unwrap()
+        alert(`${product.productName} silindi !!`)
+        await dispatch(getProduct()).unwrap();
+      }
+    } catch (error: any) {
+      console.log(error.message)
     }
-    dispatch(getProduct()).unwrap();
   }
-
+  useEffect(() => {
+    dispatch(getProduct()).unwrap();
+  }, [dispatch]);
   return (
     <div className='w-full p-7'>
       <h1 className='text-xl font-bold mb-2 tracking-[1px]'>Product List</h1>

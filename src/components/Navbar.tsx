@@ -21,16 +21,16 @@ const Navbar = () => {
             <div className="w-full">
               <p className="flex flex-row items-center justify-between gap-1 text-[18px] font-medium tracking-[0.5px] mb-1 pl-2 py-1 rounded-md hover:bg-gray-200" onClick={() => setIsCargoList(!isCargoList)}> Cargo {isCargoList ? <MdOutlineKeyboardDoubleArrowUp /> : <MdOutlineKeyboardDoubleArrowDown />}</p>
               <ul className={`overflow-hidden transition-all duration-300 ease-in-out ${isCargoList ? "max-h-40" : "max-h-0"}`}>
-                <Link to="/cargo-list"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Cargo List <MdOutlineKeyboardArrowRight /></li></Link>
-                <Link to="/cargo-create"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light" >Create Cargo<MdOutlineKeyboardArrowRight /></li></Link>
-                <Link to="/tracking-cargo/"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Tracking Cargo<MdOutlineKeyboardArrowRight /></li></Link>
+                <Link onClick={()=>setOpenMenü(false)} to="/cargo-list"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Cargo List <MdOutlineKeyboardArrowRight /></li></Link>
+                <Link onClick={()=>setOpenMenü(false)} to="/cargo-create"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light" >Create Cargo<MdOutlineKeyboardArrowRight /></li></Link>
+                <Link onClick={()=>setOpenMenü(false)} to="/tracking-cargo/"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Tracking Cargo<MdOutlineKeyboardArrowRight /></li></Link>
               </ul>
             </div>
             <div className="w-full">
               <p className="flex flex-row items-center justify-between gap-1 text-[18px] font-medium tracking-[0.5px] mb-1 pl-2 py-1 rounded-md hover:bg-gray-200" onClick={() => setIsProductList(!isProductList)}>Product {isProductList ? <MdOutlineKeyboardDoubleArrowUp /> : <MdOutlineKeyboardDoubleArrowDown />}</p>
               <ul className={`overflow-hidden transition-all duration-300 ease-in-out ${isProductList ? "max-h-40" : "max-h-0"}`}>
-                <Link to="/product-list"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light" >Product List<MdOutlineKeyboardArrowRight /></li></Link>
-                <Link to="/product-add"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Add Product<MdOutlineKeyboardArrowRight /></li></Link>
+                <Link onClick={()=>setOpenMenü(false)} to="/product-list"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light" >Product List<MdOutlineKeyboardArrowRight /></li></Link>
+                <Link onClick={()=>setOpenMenü(false)} to="/product-add"><li className="flex flex-row items-center justify-between pl-2 py-1 rounded-md hover:bg-gray-200 font-light">Add Product<MdOutlineKeyboardArrowRight /></li></Link>
               </ul>
             </div>
           </div>

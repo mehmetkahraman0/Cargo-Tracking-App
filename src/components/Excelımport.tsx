@@ -18,13 +18,14 @@ const ExcelImport: React.FC = () => {
     const [file, setFile] = useState<File>()
     const handleFileUpload = async () => {
         console.log(file)
-            if (!file) {
-                alert("Select File !!")
-                return
-            }
+        if (!file) {
+            alert("Select File !!")
+            return
+        }
         const reader = new FileReader()
         reader.onload = async (evt) => {
             const data = evt.target?.result
+            console.log(data)
             if (!data) return
             const workbook = XLSX.read(data, { type: 'array' })
             const worksheet = workbook.Sheets[workbook.SheetNames[0]]
@@ -32,27 +33,27 @@ const ExcelImport: React.FC = () => {
             console.log(rawData)
             for (const item of rawData) {
                 let fotoBase64 = ''
-                if (item.fotoUrl) {
+                if (item.file) {
                     console.log(item)
                     try {
-                        const response = await fetch(item.fotoUrl)
+                        const response = await fetch(item.file)
                         console.log(response)
                         const blob = await response.blob()
                         console.log(blob)
                         fotoBase64 = await convertBlobToBase64(blob)
                         console.log(fotoBase64)
                     } catch (error) {
-                        console.error('Görsel dönüştürme hatası:', item.fotoUrl, error)
+                        console.error('Görsel dönüştürme hatası:', item.file, error)
                         continue // hatalı görselleri atla
                     }
                 }
                 console.log(fotoBase64)
                 await dispatch(addProduct({ productName: item.productName, serialNo: item.serialNo, file: fotoBase64 }))
             }
+            alert("import işlemi başarılı");
         }
         reader.readAsArrayBuffer(file)
-        alert("import işlemi başarılı");
-        window.location.reload()
+
     }
 
     return (

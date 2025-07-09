@@ -6,6 +6,7 @@ import ProductListPage from "./pages/ProductListPage"
 import CargoListPage from "./pages/CargoListPage"
 import CargoPage from "./pages/CargoPage"
 import Deneme from "./pages/Deneme"
+import CargoUpdatePage from "./pages/CargoUpdatePage"
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/cargo-create" element={<CreateCargoPage />} />
         <Route path="/cargo-list" element={<CargoListPage />} />
         <Route path="/cargo/:id" element={<CargoPage />} />
+        <Route path="/cargo/update/:id" element={<CargoUpdatePage />} />
+
       </Routes>
     </div>
   )

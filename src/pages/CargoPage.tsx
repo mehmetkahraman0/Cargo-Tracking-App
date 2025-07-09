@@ -1,22 +1,32 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { type AppDispatch, type RootState } from '../redux/store'
-import { getCargo } from '../redux/slices/cargoSlice'
+import { deleteCargo, getCargo } from '../redux/slices/cargoSlice'
 import { Image, Table, type TableColumnsType } from 'antd'
 import type { SelectedProductList } from '../models/Product'
 import { QRCodeSVG } from 'qrcode.react'
 
 const CargoPage = () => {
+    const componentRef = useRef<HTMLDivElement>(null)
     const url = "http://localhost:5173"
     const { id } = useParams()
     const dispatch = useDispatch<AppDispatch>()
     const cargos = useSelector((state: RootState) => state.cargo.cargos)
     const cargo = cargos.filter((item) => item.id == id)
+    const navigate = useNavigate()
 
+    const updateNavigateHandler = (id: string) => {
+        navigate(`/cargo/update/${id}`)
+    }
+    const deleteCargoHandler = (id: string) => {
+        dispatch(deleteCargo({ id })).unwrap()
+        alert(cargo[0].cargoName + "is deleted.")
+        navigate("/cargo/list")
+    }
     useEffect(() => {
         dispatch(getCargo()).unwrap()
-    }, [dispatch])
+    }, [dispatch, cargo])
 
     const columns: TableColumnsType<SelectedProductList> = [
         {
@@ -50,10 +60,7 @@ const CargoPage = () => {
     ]
 
     return (
-        <div className='w-full mx-5'>
-            <div>
-
-            </div>
+        <div ref={componentRef} className='w-full mx-5'>
             <div className='w-full flex flex-col gap-5 mt-5'>
                 <div className='w-full flex flex-col bg-gray-100 rounded shadow p-4 gap-3'>
                     <div className='flex flex-col md:flex-row'>
@@ -73,7 +80,7 @@ const CargoPage = () => {
                             <QRCodeSVG className='h-[150px]' value={`${url}/${cargo[0].id}`} size={150} />
                         </div>
                     </div>
-                    <div className='flex items-center gap-2 pr-2 cursor-pointer hover:underline rounded-md hover:bg-gray-200 size-fit'>
+                    <div className='flex items-center gap-2 pr-2 cursor-pointer size-fit'>
                         <p className='font-bold'> Products :</p>
                     </div>
                     <Table
@@ -83,6 +90,9 @@ const CargoPage = () => {
                         rowKey={(record) => record.product.id || record.product.serialNo || Math.random().toString()}
                         size="small"
                     />
+                    <button className='mx-5 border bg-blue-500 hover:bg-blue-600 rounded-sm text-[14px] text-white py-1' onClick={() => updateNavigateHandler(cargo[0].id!)}>Update</button>
+                    <button className='mx-5 border bg-red-500 hover:bg-red-600 rounded-sm text-[14px] text-white py-1' onClick={() => deleteCargoHandler(cargo[0].id!)}>Delete</button>
+
                 </div>
             </div>
         </div>
