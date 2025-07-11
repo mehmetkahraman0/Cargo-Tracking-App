@@ -52,20 +52,34 @@ const initialState: UserState = {
 }
 
 // aslında bir update fonksiyonu çünkü kullanıcı adı zaten önceden oluşturuluyor.
-export const signUp = createAsyncThunk<User, { userName: string, password: string }>("user/signUp",
-    async ({ userName, password }) => {
-        const { data: user, error } = await supabase.from("user").update({ password }).eq("userName", userName).select().single()
+export const signUp = createAsyncThunk<User, { userName: string, password: string, defaultPassword: string }>("user/signUp",
+    async ({ userName, defaultPassword, password }) => {
+        const { data: user, error } = await supabase.from("user").update({ password }).eq("userName", userName).eq("defaultPassword", defaultPassword).select().single()
         if (error) throw error.message
         return user
     })
 
-export const signIn = createAsyncThunk<User, { userName: string, password: string }>("user/signIn",
-    async ({ userName, password }) => {
-        const { data: user, error } = await supabase.from("user").select("userName, status").eq("userName", userName).eq("password", password).single()
-        if (error) throw error.message
-        localStorage.setItem("user", JSON.stringify(user))
-        return user
-    })
+export const signIn = createAsyncThunk<
+    User,
+    { userName: string; password?: string; defaultPassword?: string }>("user/signIn",
+        async ({ userName, password, defaultPassword }) => {
+            let query = supabase.from("user").select("userName, status").eq("userName", userName);
+
+            if (password !== undefined) {
+                query = query.eq("password", password);
+            }
+
+            if (defaultPassword !== undefined) {
+                query = query.eq("defaultPassword", defaultPassword);
+            }
+
+            const { data: user, error } = await query.single();
+
+            if (error) throw error.message;
+
+            localStorage.setItem("user", JSON.stringify(user));
+            return user;
+        });
 
 export const signOut = createAsyncThunk<User, { userName: string }>("user/signOut",
     async ({ userName }) => {
@@ -80,9 +94,9 @@ export const signOut = createAsyncThunk<User, { userName: string }>("user/signOu
         }
     })
 
-export const createUser = createAsyncThunk<User, { userName: string, status: string }>("user/createUser",
-    async ({ userName, status }) => {
-        const { data: user, error } = await supabase.from("user").insert([{ userName, status }]).select().single()
+export const createUser = createAsyncThunk<User, { userName: string, status: string, defaultPassword: string }>("user/createUser",
+    async ({ userName, status, defaultPassword }) => {
+        const { data: user, error } = await supabase.from("user").insert([{ userName, status, defaultPassword }]).select().single()
         if (error) throw error.message
         return user
     })

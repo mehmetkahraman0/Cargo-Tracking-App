@@ -6,11 +6,14 @@ import { Table, Image } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Product } from '../models/Product';
 import { MdDeleteOutline, MdSystemUpdateAlt } from 'react-icons/md';
+import Found404Page from './Found404Page';
 
 const ProductListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.product.products);
   const getLoading = useSelector((state: RootState) => state.product.getLoading)
+  const currentUser = useSelector((state: RootState) => state.user.currentUser)
+  console.log(currentUser)
 
   const columns: TableColumnsType<Product> = [
     {
@@ -36,12 +39,12 @@ const ProductListPage = () => {
       key: 'serialNo',
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: 'Action',
+      key: 'action',
       render: (_: any, record: Product) => (
         <div className='flex gap-8'>
-          <button className="text-yellow-600 text-[18px] "><MdSystemUpdateAlt /></button>
-          <button onClick={() => handleDelete(record)} className="text-red-700 text-[18px]"> <MdDeleteOutline /></button>
+          <div className={["Admin"].includes(currentUser?.status) ? "text-red-600 text-[14px] " : "hidden"}>You Don't Have Authorization</div>
+          <button className={["Admin"].includes(currentUser?.status) ? "hidden" : "text-red-600 text-[18px] "} onClick={() => handleDelete(record)}> <MdDeleteOutline /></button>
         </div>
       ),
     },
@@ -61,15 +64,18 @@ const ProductListPage = () => {
   useEffect(() => {
     dispatch(getProduct()).unwrap();
   }, [dispatch]);
+
   return (
-    <div className='w-full p-7'>
-      <h1 className='text-xl font-bold mb-2 tracking-[1px]'>Product List</h1>
-      <hr className='mb-4' />
-      {getLoading
-        ? "Loading"
-        : <Table<Product> columns={columns} dataSource={products} rowKey={(record) => record.id || record.serialNo || Math.random().toString()} />
-      }
-    </div>
+    ["Master Admin", "Admin"].includes(currentUser?.status)
+      ? <div className='w-full p-7'>
+        <h1 className='text-xl font-bold mb-2 tracking-[1px]'>Product List</h1>
+        <hr className='mb-4' />
+        {getLoading
+          ? "Loading"
+          : <Table<Product> columns={columns} dataSource={products} rowKey={(record) => record.id || record.serialNo || Math.random().toString()} />
+        }
+      </div>
+      : <Found404Page />
   );
 };
 

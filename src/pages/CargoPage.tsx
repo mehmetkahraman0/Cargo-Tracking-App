@@ -22,7 +22,7 @@ const CargoPage = () => {
     const deleteCargoHandler = (id: string) => {
         dispatch(deleteCargo({ id })).unwrap()
         alert(cargo[0].cargoName + "is deleted.")
-        navigate("/cargo/list")
+        navigate("/cargo-list")
     }
     useEffect(() => {
         dispatch(getCargo()).unwrap()
@@ -69,6 +69,7 @@ const CargoPage = () => {
                                 <div className='flex flex-row items-center gap-2 font-bold'>Created at : <p className='text-[14px] font-medium'>{cargo[0].created_at!.slice(0, 10)}</p></div>
                                 <div className='flex flex-row items-center gap-2 font-bold'>Cargo Name : <p className='text-[14px] font-medium'> {cargo[0].cargoName}</p></div>
                                 <div className='flex flex-row items-center gap-2 font-bold'>Cargo Company :<p className='text-[14px] font-medium'>{cargo[0].cargoCompany}</p></div>
+                                <div className='flex flex-row items-center gap-2 font-bold'>Cargo Status :<p className='text-[14px] font-medium'>{cargo[0].status}</p></div>
                                 <div className='flex flex-row flex-wrap gap-1 font-medium text-[14px]'>
                                     <p className='font-bold text-[16px]'>Recipient :</p>
                                     {cargo[0].recipient ? cargo[0].recipient.map((rec, i) => <p className='underline' key={i}> {rec}</p>) : <p className='underline'>Everyone</p>}

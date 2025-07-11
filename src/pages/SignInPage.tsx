@@ -1,27 +1,49 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { type AppDispatch, type RootState } from "../redux/store"
-import { signIn } from '../redux/slices/userSlice';
+import { getUser, signIn } from '../redux/slices/userSlice';
+import { useNavigate } from "react-router-dom";
 
 const SignInPage = () => {
     const dispatch = useDispatch<AppDispatch>()
+    const navigate = useNavigate()
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
-    let signInError = useSelector((state: RootState) => state.user.signInError)
-
+    let userEx = useSelector((state: RootState) => state.user.user)
+    let sigin = useSelector((state: RootState) => state.user.signInUser)
+    console.log(sigin)
+    console.log(userEx)
     const handleUserSignUp = async () => {
-        if (userName && password) {
-             dispatch(signIn({ userName, password })).unwrap
-            if (!signInError) {
-                alert("kullanıcı girişi yapıldı")
-            } else {
-                alert("kullanıcı bilgileri yanlış")
-            }
-        } else {
-            alert("bilgileri eksiksiz giriniz")
+        if (!userName || !password) {
+            alert("bilgileri eksiksiz giriniz");
+            return;
         }
-        signInError = undefined
-    }
+
+        try {
+            const userEx = await dispatch(getUser({ userName })).unwrap();
+            if (userEx?.password === password) {
+                await dispatch(signIn({ userName, password })).unwrap();
+                alert("aaakullanıcı girişi yapıldı");
+                navigate("/");
+                window.location.reload();
+                return;
+            }
+
+            if (userEx?.defaultPassword === password && !userEx?.password) {
+                await dispatch(signIn({ userName, defaultPassword: password })).unwrap();
+                alert("bbbkullanıcı girişi yapıldı");
+                navigate("/user/signup");
+                window.location.reload();
+                return;
+            }
+
+            alert("Şifre uyuşmuyor.");
+        } catch (error) {
+            console.log(error);
+            alert("Kullanıcı bulunamadı veya giriş hatası.");
+        }
+    };
+
 
     return (
         <div className="w-full h-screen flex flex-col justify-center items-center bg-amber-200">

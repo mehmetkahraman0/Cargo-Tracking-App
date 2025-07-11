@@ -51,7 +51,7 @@ const AllUsersPage = () => {
     }
 
     return (
-        currentUser.status == "Master Admin"
+          ["Master Admin"].includes(currentUser?.status)
             ? <div className='w-full p-5 flex flex-col '>
                 <Table
                     columns={columns}

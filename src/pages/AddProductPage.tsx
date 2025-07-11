@@ -29,7 +29,7 @@ const AddProductPage = () => {
     }
 
     return (
-        currentUser.status == "Master Admin"
+          ["Master Admin"].includes(currentUser?.status)
             ? <div className="w-full bg-amber-50 p-4">
                 <div className=" flex flex-col gap-4">
                     <div className="mb-5">

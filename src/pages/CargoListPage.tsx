@@ -56,8 +56,8 @@ const CargoListPage = () => {
   const result = filteredCargos.length > 0 ? filteredCargos : cargos;
   const paginationResult = result.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
-  const handleNavigate = (trackingCode: string) => {
-    navigate(`/cargo/${trackingCode}`)
+  const handleNavigate = (id: string) => {
+    navigate(`/cargo/${id}`)
   }
 
   const columns: TableColumnsType<SelectedProductList> = [
@@ -90,16 +90,15 @@ const CargoListPage = () => {
       key: 'piece',
     },
   ]
-
   useEffect(() => {
     dispatch(getCargo()).unwrap()
-  }, [dispatch, currentPage])
+  }, [dispatch, currentPage, filteredCargos])
   return (
     getLoading
       ? <div className='w-full'>loading</div>
       :
-      currentUser.status == "Official" || currentUser.status == "Admin" || currentUser.status == "Master Admin" ?
-        <div className='w-full flex-col mt-5 mx-5'>
+      ["Master Admin", "Admin", "Official"].includes(currentUser?.status)
+        ? <div className='w-full flex-col mt-5 mx-5'>
           <div >
             <header className='font-semibold text-[18px] tracking-normal mb-1'>Select Page Type</header>
             <div className='flex flex-row gap-5'>
@@ -119,11 +118,12 @@ const CargoListPage = () => {
                   <option value="Yurtİçi">Yurtİçi</option>
                   <option value="UPS">UPS</option>
                 </select>
-                <input className='w-full border rounded-sm p-1' type="text" onChange={(e) => setFilterName(e.target.value)} placeholder='Enter Filter Name' />
+                <input className='w-full border rounded-sm p-1 text-[14px]' type="text" onChange={(e) => setFilterName(e.target.value)} placeholder='Enter Filter Name' />
               </div>
               <div className=' w-full flex flex-row justify-between gap-3'>
                 <input className='w-[120px]' type="date" onChange={(e) => setFilterDate(e.target.value)} />
-                <button className='bg-blue-500 text-[14px] text-white rounded-md px-2 py-1 w-[80px] cursor-pointer hover:bg-blue-600 transition' onClick={() => filterHandler()}>Filter</button>
+                <button className={filteredCargos.length != 0 ? 'bg-red-500 text-[14px] text-white rounded-md px-2 py-1 size-fit cursor-pointer hover:bg-red-600 transition' : "hidden"} onClick={() => setFilteredCargos([])}>Reset Filter</button>
+                <button className='bg-blue-500 text-[14px] text-white rounded-md px-2 py-1 size-fit cursor-pointer hover:bg-blue-600 transition' onClick={() => filterHandler()}>Filter</button>
               </div>
             </div>
             <hr className='mt-5' />
@@ -145,7 +145,7 @@ const CargoListPage = () => {
             </div>
           </div>
           <div className='w-full flex flex-col gap-5 '>
-            <VirtualList data={pageType == "Virtual List" ? result.reverse() : paginationResult.reverse()} itemKey={(item) => item.id!}>
+            <VirtualList data={pageType == "Virtual List" ? result.slice().reverse() : paginationResult.slice().reverse()} itemKey={(item) => item.id!}>
               {(item, index) => (
                 <div key={index} className='w-full flex flex-col bg-gray-100 rounded shadow p-4 gap-3 mb-5'>
                   <div className='w-full flex flex-col md:flex-row justify-between'>
