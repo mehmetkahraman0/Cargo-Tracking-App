@@ -5,11 +5,13 @@ import { type AppDispatch, type RootState } from '../redux/store'
 import { Table, type TableColumnsType } from 'antd'
 import type { User } from '../models/User'
 import Found404Page from './Found404Page'
+import { useNavigate } from 'react-router-dom'
 
 const AllUsersPage = () => {
     const dispatch = useDispatch<AppDispatch>()
     const users = useSelector((state: RootState) => state.user.allUSer)
     const currentUser = useSelector((state: RootState) => state.user.currentUser)
+    const navigate = useNavigate()
 
     useEffect(() => {
         dispatch(getAllUser()).unwrap()
@@ -38,8 +40,9 @@ const AllUsersPage = () => {
             title: 'Actions',
             key: 'actions',
             render: (record: User) => (
-                <div className='flex gap-8'>
-                    <button className='border rounded-md bg-red-500 hover:bg-red-600 transition px-2 py-1 text-white' onClick={() => handleDeleteUser(record.userName)}>Delete</button>
+                <div className='flex flex-col md:flex-row gap-2'>
+                    <button className='border text-[14px] rounded-md bg-red-500 hover:bg-red-600 transition px-2 py-1 text-white' onClick={() => handleDeleteUser(record.userName)}>Delete</button>
+                    <button className='border text-[14px] rounded-md bg-green-400 hover:bg-green-500 transition px-2 py-1 text-white' onClick={() => handleNavigateUpdate(record.userName)}>Update</button>
                 </div>
             ),
         },
@@ -50,8 +53,12 @@ const AllUsersPage = () => {
         window.location.reload()
     }
 
+    const handleNavigateUpdate = (userName: any) => {
+        navigate(`/user/update/${userName}`)
+    }
+
     return (
-          ["Master Admin"].includes(currentUser?.status)
+        ["Master Admin"].includes(currentUser?.status)
             ? <div className='w-full p-5 flex flex-col '>
                 <Table
                     columns={columns}

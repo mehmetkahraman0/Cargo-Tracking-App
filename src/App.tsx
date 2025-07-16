@@ -12,6 +12,7 @@ import SignInPage from "./pages/SignInPage"
 import AllUsersPage from "./pages/AllUsersPage"
 import HomePage from "./pages/HomePage"
 import TrackingCargoPage from "./pages/TrackingCargoPage"
+import UpdateUserPage from "./pages/UpdateUserPage"
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/user/signin" element={<SignInPage />} />
         <Route path="/user/allusers" element={<AllUsersPage />} />
         <Route path="/tracking-cargo" element={<TrackingCargoPage />} />
+        <Route path="/user/update/:username" element={<UpdateUserPage />} />
+
       </Routes>
     </div>
   )

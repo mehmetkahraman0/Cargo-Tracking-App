@@ -123,6 +123,14 @@ export const getUser = createAsyncThunk<User | null, { userName: string }>("user
     }
 )
 
+export const updateUser = createAsyncThunk<User,User >("user/updateUser",
+    async (userD) => {
+        const { data: user } = await supabase.from("user").update(userD).eq("id", userD.id).select().single()
+        return user
+    }
+)
+
+
 const userSlice = createSlice({
     name: "user",
     initialState,
