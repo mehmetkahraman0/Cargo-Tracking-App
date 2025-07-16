@@ -5,7 +5,7 @@ import { type AppDispatch, type RootState } from '../redux/store';
 import { Table, Image } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Product } from '../models/Product';
-import { MdDeleteOutline, MdSystemUpdateAlt } from 'react-icons/md';
+import { MdDeleteOutline } from 'react-icons/md';
 import Found404Page from './Found404Page';
 
 const ProductListPage = () => {
