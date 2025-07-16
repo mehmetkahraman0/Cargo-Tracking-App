@@ -18,6 +18,10 @@ const AddProductPage = () => {
             alert("file nesnesi yok")
             return
         }
+        if(productName == "" && serialNo == ""){
+            alert("Ürün bilgilerini eksiksiz giriniz.")
+            return
+        }
         const fileName = file.name
         const extension = fileName.split('.').pop()?.toLowerCase();
         if (extension != "png" && extension != "jpeg" && extension != "jpg") {

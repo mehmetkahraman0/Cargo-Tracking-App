@@ -13,7 +13,11 @@ const CreateUserPage = () => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const createUserHandler = async () => {
-    dispatch(createUser({ userName, status, defaultPassword })).unwrap()
+    if (userName == "" || defaultPassword == ""){
+      alert("Bilgileri eksiksiz giriniz.")
+      return
+    }
+      dispatch(createUser({ userName, status, defaultPassword })).unwrap()
     if (createdUserError) {
       alert(createdUserError)
       console.log(createdUserError)

@@ -23,6 +23,7 @@ const CargoUpdatePage = () => {
     const [recipientList, setRecipientList] = useState<string[]>([])
     const [everoneRecipient, setEveroneRecipient] = useState(false)
     const [cargoCompany, setCargoCompany] = useState("")
+    const [trackingCode, setTrackingCode] = useState("")
     const [searchValue, setSearchValue] = useState("")
     const [recipient, setRecipient] = useState("")
     const [productPiece, setProductPiece] = useState<string>("1")
@@ -45,6 +46,7 @@ const CargoUpdatePage = () => {
             setRecipientList(cargo.recipient || [])
             setEveroneRecipient(cargo.everoneRecipient || false)
             setCargoCompany(cargo.cargoCompany || "")
+            setTrackingCode(cargo.cargoTrackingCode || "")
             setSelectedProductList(cargo.product || [])
         }
     }, [cargo])
@@ -83,20 +85,20 @@ const CargoUpdatePage = () => {
             cargoCompany: cargoCompany || cargo.cargoCompany,
             product: selectedProductList.length > 0 ? selectedProductList : [],
             created_at: cargo.created_at,
-            cargoTrackingCode: cargo.cargoTrackingCode,
+            cargoTrackingCode: !["Draft", "Getting Ready"].includes(status) ? trackingCode : cargo.cargoTrackingCode,
             id: cargo.id,
         };
 
         console.log(updated)
         await dispatch(updateCargo({ id: cargo.id, cargo: updated }));
         alert("Kargo güncellendi!");
-        navigate(`/cargo/${cargo.cargoTrackingCode}`)
+        navigate(`/cargo/${cargo.id}`)
     };
 
     if (!cargo) return <div className="p-4">Kargo bulunamadı.</div>
 
     return (
-  ["Master Admin", "Admin"].includes(currentUser?.status)
+        ["Master Admin", "Admin"].includes(currentUser?.status)
             ? <div className="w-full bg-amber-50 p-4">
                 <div className="flex flex-col gap-4">
                     <p className="font-semibold text-[18px]">Update Cargo</p>
@@ -161,6 +163,10 @@ const CargoUpdatePage = () => {
                             <option value="Yurtİçi">Yurtİçi</option>
                             <option value="UPS">UPS</option>
                         </select>
+                    </div>
+                    <div className='flex flex-col'>
+                        <label htmlFor="">Cargo Tracking Code</label>
+                        {cargo.cargoTrackingCode ? <input className="border p-1 text-[14px] rounded-sm w-full" type="text" placeholder={cargo.cargoTrackingCode} readOnly /> : <input value={trackingCode} onChange={(e) => setTrackingCode(e.target.value)} className="border p-1 text-[14px] rounded-sm w-full" type="text" placeholder='Enter Cargo Tracking Code' />}
                     </div>
                     <div className="flex justify-end">
                         <button className="bg-blue-500 text-white px-3 py-1 rounded-sm text-sm hover:bg-blue-600" onClick={handleSave}>Update</button>

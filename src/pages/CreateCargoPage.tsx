@@ -21,7 +21,7 @@ const CreateCargoPage = () => {
   const [recipient, setRecipient] = useState("")
   const [everoneRecipient, setEveroneRecipient] = useState(true)
   const [cargoCompany, setCargoCompany] = useState("")
-  let cargoTrackingCode: string
+  const [trackingCode, setTrackingCode] = useState("")
   const [searchValue, setSearchValue] = useState("");
   const [selectedProductList, setSelectedProductList] = useState<SelectedProductList[]>([])
   const searchedProduct = products.filter((item) => item.productName?.toLowerCase().includes(searchValue.toLowerCase()))
@@ -37,12 +37,18 @@ const CreateCargoPage = () => {
       setEveroneRecipient(false)
     }
     created_at = new Date().toISOString()
-    if (status != "Draft" && status != "Getting Ready") {
-      cargoTrackingCode = `${Date.now()}-${Math.floor(Math.random() * 1000)}`
-    }
+    const finalTrackingCode = status == "Draft" || status == "Getting Ready" || cargoCompany == "" ? "" : trackingCode
+    // if (status == "Draft" || status == "Getting Ready") {
+    //   console.log("giriyor")
+    //   setTrackingCode("")
+    // }
+    
     try {
-      await dispatch(createCargo({ cargoName, status, created_at, product: selectedProductList, recipient: recipientList, everoneRecipient, cargoCompany, cargoTrackingCode })).unwrap()
+      await dispatch(createCargo({ cargoName, status, created_at, product: selectedProductList, recipient: recipientList, everoneRecipient, cargoCompany, cargoTrackingCode: finalTrackingCode })).unwrap()
       navigate("/cargo-list")
+      if (finalTrackingCode == "" && trackingCode == "") {
+        alert("Bilgilendirme : \nKargo Şirketi girilmeden kargo takip kodu oluşturumazsınız. \nKargo durumu taslak ya da hazırlanıyor durumundayken kargo takip kodu oluşturmazsınız.")
+      }
     } catch (error) {
       console.log(error)
       alert("Kargo oluşturulamadı.")
@@ -166,6 +172,10 @@ const CreateCargoPage = () => {
               <option value="Yurtİçi">Yurtİçi</option>
               <option value="UPS">UPS</option>
             </select>
+          </div>
+          <div className='flex flex-col'>
+            <label htmlFor="">Cargo Tracking Code</label>
+            <input value={trackingCode} onChange={(e) => setTrackingCode(e.target.value)} className="border p-1 text-[14px] rounded-sm w-full" type="text" placeholder='Enter Cargo Tracking Code' />
           </div>
           <div className="flex flex-row justify-end mt-5">
             <button className="size-fit bg-blue-500 hover:bg-blue-300 px-2 py-1 text-white rounded-sm text-[14px] tracking-[0.5px]" onClick={() => handleSave()}>Save</button>
