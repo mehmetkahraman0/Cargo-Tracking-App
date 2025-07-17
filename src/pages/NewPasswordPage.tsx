@@ -11,7 +11,6 @@ const NewPasswordPage = () => {
   const [defaultPassword, setDefaultPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const user = useSelector((state: RootState) => state.user.user)
-  console.log(user?.password)
 
   const handleUserSignUp = async () => {
     if (!userName || !defaultPassword || !newPassword) {

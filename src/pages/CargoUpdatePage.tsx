@@ -16,7 +16,6 @@ const CargoUpdatePage = () => {
     const navigate = useNavigate()
     const cargos = useSelector((state: RootState) => state.cargo.cargos)
     const products = useSelector((state: RootState) => state.product.products)
-    console.log("product : " + products)
     const cargo = cargos.find(item => item.id == id)
     const [cargoName, setCargoName] = useState("")
     const [status, setStatus] = useState("")

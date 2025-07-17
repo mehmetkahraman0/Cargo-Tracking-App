@@ -13,7 +13,6 @@ const ProductListPage = () => {
   const products = useSelector((state: RootState) => state.product.products);
   const getLoading = useSelector((state: RootState) => state.product.getLoading)
   const currentUser = useSelector((state: RootState) => state.user.currentUser)
-  console.log(currentUser)
 
   const columns: TableColumnsType<Product> = [
     {

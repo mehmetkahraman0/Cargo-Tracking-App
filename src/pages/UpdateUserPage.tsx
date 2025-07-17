@@ -16,7 +16,6 @@ const UpdateUserPage = () => {
     const [status, setStatus] = useState(user?.status);
     const [password, setPassword] = useState(user?.password);
     const currentUser = useSelector((state: RootState) => state.user.currentUser);
-    console.log(user)
     const updateHandler = async () => {
         if (!user) return
         if (!userName) return

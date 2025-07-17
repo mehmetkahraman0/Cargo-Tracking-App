@@ -11,8 +11,6 @@ import { useNavigate } from "react-router-dom"
 const CreateCargoPage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const createdCargo = useSelector((state: RootState) => state.cargo.addedCargo)
-  console.log(createdCargo)
   const products = useSelector((state: RootState) => state.product.products)
   const [cargoName, setCargoName] = useState("")
   const [status, setStatus] = useState("Draft")

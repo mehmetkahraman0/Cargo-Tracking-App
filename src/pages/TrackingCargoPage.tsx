@@ -6,9 +6,7 @@ import { useNavigate } from "react-router-dom"
 const TrackingCargoPage = () => {
     const navigate = useNavigate()
     const cargos = useSelector((state: RootState) => state.cargo.cargos)
-    console.log(cargos)
     const [code, setCode] = useState("")
-    console.log(code)
     const trackingHandler = () => {
         const cargo = cargos.filter((item => item.cargoTrackingCode == code))
         console.log(cargo)

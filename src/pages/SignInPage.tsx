@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { type AppDispatch, type RootState } from "../redux/store"
+import { useDispatch } from "react-redux"
+import { type AppDispatch } from "../redux/store"
 import { getUser, signIn } from '../redux/slices/userSlice';
 import { useNavigate } from "react-router-dom";
 
@@ -9,10 +9,7 @@ const SignInPage = () => {
     const navigate = useNavigate()
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
-    let userEx = useSelector((state: RootState) => state.user.user)
-    let sigin = useSelector((state: RootState) => state.user.signInUser)
-    console.log(sigin)
-    console.log(userEx)
+
     const handleUserSignUp = async () => {
         if (!userName || !password) {
             alert("bilgileri eksiksiz giriniz");
@@ -23,7 +20,7 @@ const SignInPage = () => {
             const userEx = await dispatch(getUser({ userName })).unwrap();
             if (userEx?.password === password) {
                 await dispatch(signIn({ userName, password })).unwrap();
-                alert("aaakullanıcı girişi yapıldı");
+                alert("Kullanıcı girişi yapıldı.");
                 navigate("/");
                 window.location.reload();
                 return;
@@ -31,7 +28,7 @@ const SignInPage = () => {
 
             if (userEx?.defaultPassword === password && !userEx?.password) {
                 await dispatch(signIn({ userName, defaultPassword: password })).unwrap();
-                alert("bbbkullanıcı girişi yapıldı");
+                alert("Kullanıcı girişi yapıldı.");
                 navigate("/user/signup");
                 window.location.reload();
                 return;

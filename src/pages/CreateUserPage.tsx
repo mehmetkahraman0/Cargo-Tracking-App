@@ -32,7 +32,7 @@ const CreateUserPage = () => {
 
   return (
     ["Master Admin"].includes(currentUser?.status)
-      ? <div className="w-full flex flex-col gap-2 p-5 bg-amber-100">
+      ? <div className="w-full flex flex-col gap-2 p-5 bg-amber-50">
         <header className="font-semibold text-[20px]">Create User</header>
         <hr />
         <div className="w-full flex flex-col gap-1">
