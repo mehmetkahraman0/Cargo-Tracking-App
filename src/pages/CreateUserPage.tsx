@@ -3,30 +3,30 @@ import { useDispatch, useSelector } from "react-redux"
 import { type AppDispatch, type RootState } from "../redux/store"
 import { createUser } from "../redux/slices/userSlice"
 import Found404Page from "./Found404Page"
+import { useNavigate } from "react-router-dom"
 
 const CreateUserPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { createdUser, createdUserError } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate()
   const [status, setStatus] = useState("User");
   const [defaultPassword, setDefaultPassword] = useState("");
   const [userName, setUserName] = useState("");
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const createUserHandler = async () => {
-    if (userName == "" || defaultPassword == ""){
+    if (userName == "" || defaultPassword == "") {
       alert("Bilgileri eksiksiz giriniz.")
       return
     }
-      dispatch(createUser({ userName, status, defaultPassword })).unwrap()
-    if (createdUserError) {
-      alert(createdUserError)
-      console.log(createdUserError)
-      return
+    try {
+      await dispatch(createUser({ userName, status, defaultPassword })).unwrap()
+      alert("kullanıcı oluşturma başarılı.")
+      setUserName("");
+      setStatus("User");
+      navigate("/user/allusers")
+    } catch (error: any) {
+      alert(error.message)
     }
-    console.log(createdUser)
-    alert("kullanıcı oluşturma başarılı.")
-    setUserName("");
-    setStatus("User");
   }
 
 
