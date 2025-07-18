@@ -7,8 +7,10 @@ import { MdOutlineKeyboardDoubleArrowDown, MdDeleteOutline } from 'react-icons/m
 import { getProduct } from "../redux/slices/productSlice"
 import Found404Page from "./Found404Page"
 import { useNavigate } from "react-router-dom"
+import { useAlert } from "../functions/useAlert"
 
 const CreateCargoPage = () => {
+  const { warningAlert, errorAlert, contextHolder } = useAlert()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const products = useSelector((state: RootState) => state.product.products)
@@ -27,8 +29,9 @@ const CreateCargoPage = () => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser)
 
   const handleSave = async () => {
+
     if (cargoCompany == "select") {
-      alert("Kargo Şirketi Seçiniz")
+      warningAlert("Kargo Şirketi Seçiniz")
       return;
     }
     if (recipientList[0]) {
@@ -36,20 +39,17 @@ const CreateCargoPage = () => {
     }
     created_at = new Date().toISOString()
     const finalTrackingCode = status == "Draft" || status == "Getting Ready" || cargoCompany == "" ? "" : trackingCode
-    // if (status == "Draft" || status == "Getting Ready") {
-    //   console.log("giriyor")
-    //   setTrackingCode("")
-    // }
-    
+
     try {
       await dispatch(createCargo({ cargoName, status, created_at, product: selectedProductList, recipient: recipientList, everoneRecipient, cargoCompany, cargoTrackingCode: finalTrackingCode })).unwrap()
-      navigate("/cargo-list")
       if (finalTrackingCode == "" && trackingCode == "") {
-        alert("Bilgilendirme : \nKargo Şirketi girilmeden kargo takip kodu oluşturumazsınız. \nKargo durumu taslak ya da hazırlanıyor durumundayken kargo takip kodu oluşturmazsınız.")
+        warningAlert("Bilgilendirme : Kargo Şirketi girilmeden kargo takip kodu oluşturumazsınız. Kargo durumu taslak ya da hazırlanıyor durumundayken kargo takip kodu oluşturmazsınız.")
+        return
       }
+      navigate("/cargo-list")
     } catch (error) {
       console.log(error)
-      alert("Kargo oluşturulamadı.")
+      errorAlert("Kargo oluşturulamadı.")
     }
   }
 
@@ -60,7 +60,7 @@ const CreateCargoPage = () => {
     }
     const alreadySelected = selectedProductList.some((item) => item.product.id == product.id)
     if (alreadySelected) {
-      alert("bu ürün zaten ekli")
+      warningAlert("bu ürün zaten ekli")
       setProductPiece("1")
       setSearchValue("")
       return;
@@ -92,6 +92,7 @@ const CreateCargoPage = () => {
   return (
     ["Master Admin", "Admin", "Official"].includes(currentUser?.status)
       ? <div className="w-full bg-amber-50 p-4">
+        {contextHolder}
         <div className=" flex flex-col gap-4">
           <div className="">
             <p className="font-semibold text-[18px]">Create Cargo</p>

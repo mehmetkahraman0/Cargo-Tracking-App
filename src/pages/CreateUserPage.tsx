@@ -4,8 +4,10 @@ import { type AppDispatch, type RootState } from "../redux/store"
 import { createUser } from "../redux/slices/userSlice"
 import Found404Page from "./Found404Page"
 import { useNavigate } from "react-router-dom"
+import { useAlert } from "../functions/useAlert"
 
 const CreateUserPage = () => {
+  const { successAlert, errorAlert, contextHolder } = useAlert()
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate()
   const [status, setStatus] = useState("User");
@@ -20,12 +22,13 @@ const CreateUserPage = () => {
     }
     try {
       await dispatch(createUser({ userName, status, defaultPassword })).unwrap()
-      alert("kullanıcı oluşturma başarılı.")
+      successAlert("kullanıcı oluşturma başarılı.")
       setUserName("");
       setStatus("User");
       navigate("/user/allusers")
     } catch (error: any) {
-      alert(error.message)
+      errorAlert("Kullanıcı oluşturulamadı.")
+      console.log(error)
     }
   }
 
@@ -33,6 +36,7 @@ const CreateUserPage = () => {
   return (
     ["Master Admin"].includes(currentUser?.status)
       ? <div className="w-full flex flex-col gap-2 p-5 bg-amber-50">
+        {contextHolder}
         <header className="font-semibold text-[20px]">Create User</header>
         <hr />
         <div className="w-full flex flex-col gap-1">

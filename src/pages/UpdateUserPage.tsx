@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from "react-router-dom";
-import Found404Page from "./Found404Page";
-import { useDispatch, useSelector } from "react-redux";
-import { type AppDispatch, type RootState } from "../redux/store";
-import { getUser, updateUser } from '../redux/slices/userSlice';
+import { useDispatch } from "react-redux";
+import { type AppDispatch } from "../redux/store";
+import { setOpen, updateUser } from '../redux/slices/userSlice';
 import type { User } from '../models/User';
+import { Input, Select } from 'antd';
+import { useAlert } from '../functions/useAlert';
 
-const UpdateUserPage = () => {
-    const { username } = useParams()
+type UpdateUserProps = {
+    user: User
+}
+
+const UpdateUserPage = ({ user }: UpdateUserProps) => {
+    const { successAlert, contextHolder } = useAlert()
     const dispatch = useDispatch<AppDispatch>()
-    const navigate = useNavigate()
-    const user = useSelector((state: RootState) => state.user.user)
-    const [userName, setUserName] = useState(user?.userName);
-    const [defaultPassword, setDefaultPassword] = useState(user?.defaultPassword);
-    const [status, setStatus] = useState(user?.status);
-    const [password, setPassword] = useState(user?.password);
-    const currentUser = useSelector((state: RootState) => state.user.currentUser);
+    const [userName, setUserName] = useState("");
+    const [defaultPassword, setDefaultPassword] = useState("");
+    const [status, setStatus] = useState("");
+    const [password, setPassword] = useState("");
     const updateHandler = async () => {
         if (!user) return
         if (!userName) return
@@ -29,64 +30,55 @@ const UpdateUserPage = () => {
                 status
             }
             await dispatch(updateUser(updatedUser)).unwrap()
-            alert("update işlemi başarılı.")
-            navigate("/user/allusers")
+            successAlert("update işlemi başarılı.")
+            dispatch(setOpen())
         } catch (error) {
             console.log(error)
         }
     }
 
     useEffect(() => {
-        const userFetch = async () => {
-            if (!username) return;
-            try {
-                await dispatch(getUser({ userName: username })).unwrap()
-
-            } catch (err) {
-                console.error("Kullanıcı alınamadı ", err)
-            }
-        }
-        userFetch()
-    }, [username])
-
-    useEffect(() => {
         if (user) {
             setUserName(user.userName)
-            setDefaultPassword(user.defaultPassword)
+            setDefaultPassword(user.defaultPassword || "")
             setStatus(user.status || "")
-            setPassword(user.password)
+            setPassword(user.password || "")
         }
     }, [user])
-    return (
-        ["Master Admin"].includes(currentUser?.status)
-            ? <div className="w-full flex flex-col gap-2 p-5 bg-amber-100">
-                <header className="font-semibold text-[20px]">Update User</header>
-                <hr />
-                <div className="w-full flex flex-col gap-1">
-                    <label htmlFor="" className="font-medium text-[14px]">User Name</label>
-                    <input value={userName} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Name" onChange={(e) => setUserName(e.target.value)} />
-                </div>
-                <div className="w-full flex flex-col gap-1">
-                    <label htmlFor="" className="font-medium text-[14px]">User Default Password</label>
-                    <input value={defaultPassword} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Default Password" onChange={(e) => setDefaultPassword(e.target.value)} />
-                </div>
-                <div className="w-full flex flex-col gap-1">
-                    <label htmlFor="" className="font-medium text-[14px]">User Password</label>
-                    <input value={password} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Password" onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <div className="w-full flex flex-col">
-                    <label className="text-[14px] font-medium" htmlFor="">User Status</label>
-                    <select value={status} name="status" id="status" onChange={(e) => setStatus(e.target.value)} className="border rounded-sm p-1 text-[14px]">
-                        <option value="User">User</option>
-                        <option value="Official">Official</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Master Admin">Master Admin</option>
-                    </select>
-                </div>
-                <button className="border rounded-md bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-[14px] cursor-pointer self-end" onClick={() => updateHandler()}>Save Update</button>
-            </div>
-            : <Found404Page />
 
+    return (
+        < div className="w-full flex flex-col gap-2 p-5 mt-6" >
+            {contextHolder}
+            <header className="font-semibold text-[20px]">Update User</header>
+            <hr />
+            <div className="w-full flex flex-col gap-1">
+                <label htmlFor="" className="font-medium text-[14px]">User Name</label>
+                <Input value={userName} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Name" onChange={(e) => setUserName(e.target.value)} />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+                <label htmlFor="" className="font-medium text-[14px]">User Default Password</label>
+                <Input value={defaultPassword} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Default Password" onChange={(e) => setDefaultPassword(e.target.value)} />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+                <label htmlFor="" className="font-medium text-[14px]">User Password</label>
+                <Input value={password} type="text" className="border rounded p-1 text-[14px]" placeholder="Enter User Password" onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <div className="w-full flex flex-col">
+                <label className="text-[14px] font-medium" htmlFor="">User Status</label>
+                <Select
+                    className='w-full'
+                    defaultValue="User"
+                    onChange={(e) => setStatus(e)}
+                    options={[
+                        { value: 'User', label: 'User' },
+                        { value: 'Official', label: 'Official' },
+                        { value: 'Admin', label: 'Admin' },
+                        { value: 'Master Admin', label: 'Master Admin' },
+                    ]}
+                />
+            </div>
+            <button className="border rounded-md bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-[14px] cursor-pointer self-end mt-10" onClick={() => updateHandler()}>Save Update</button>
+        </div >
     )
 }
 

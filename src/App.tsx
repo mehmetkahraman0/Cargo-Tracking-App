@@ -5,14 +5,12 @@ import AddProductPage from "./pages/AddProductPage"
 import ProductListPage from "./pages/ProductListPage"
 import CargoListPage from "./pages/CargoListPage"
 import CargoPage from "./pages/CargoPage"
-import CargoUpdatePage from "./pages/CargoUpdatePage"
 import CreateUserPage from "./pages/CreateUserPage"
 import SignUpPage from "./pages/NewPasswordPage"
 import SignInPage from "./pages/SignInPage"
 import AllUsersPage from "./pages/AllUsersPage"
 import HomePage from "./pages/HomePage"
 import TrackingCargoPage from "./pages/TrackingCargoPage"
-import UpdateUserPage from "./pages/UpdateUserPage"
 
 function App() {
   return (
@@ -25,14 +23,11 @@ function App() {
         <Route path="/cargo-create" element={<CreateCargoPage />} />
         <Route path="/cargo-list" element={<CargoListPage />} />
         <Route path="/cargo/:id" element={<CargoPage />} />
-        <Route path="/cargo/update/:id" element={<CargoUpdatePage />} />
         <Route path="/user/create" element={<CreateUserPage />} />
         <Route path="/user/signup" element={<SignUpPage />} />
         <Route path="/user/signin" element={<SignInPage />} />
         <Route path="/user/allusers" element={<AllUsersPage />} />
         <Route path="/tracking-cargo" element={<TrackingCargoPage />} />
-        <Route path="/user/update/:username" element={<UpdateUserPage />} />
-
       </Routes>
     </div>
   )

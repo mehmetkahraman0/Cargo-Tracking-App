@@ -13,6 +13,7 @@ interface CargoState {
     getLoading: boolean
     cargos: Cargo[]
     deletedCargo: undefined | Cargo
+    open: boolean
 }
 
 const initialState: CargoState = {
@@ -25,8 +26,8 @@ const initialState: CargoState = {
     getError: undefined,
     getLoading: false,
     cargos: [],
-    deletedCargo: undefined
-
+    deletedCargo: undefined,
+    open: false
 }
 
 export const createCargo = createAsyncThunk("cargo/addCargo",
@@ -64,7 +65,11 @@ export const deleteCargo = createAsyncThunk<Cargo, { id: string }>("cargo/delete
 const cargoSlice = createSlice({
     name: "product",
     initialState,
-    reducers: {},
+    reducers: {
+        setOpen: (state) => {
+            state.open = !state.open
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createCargo.pending, state => {
@@ -106,4 +111,5 @@ const cargoSlice = createSlice({
     }
 })
 
+export const {setOpen} = cargoSlice.actions
 export default cargoSlice.reducer

@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { type AppDispatch, type RootState } from "../redux/store"
 import { signUp, getUser } from '../redux/slices/userSlice';
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../functions/useAlert";
 
 const NewPasswordPage = () => {
+  const { successAlert, warningAlert, errorAlert, contextHolder } = useAlert()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const [userName, setUserName] = useState("")
@@ -14,20 +16,19 @@ const NewPasswordPage = () => {
 
   const handleUserSignUp = async () => {
     if (!userName || !defaultPassword || !newPassword) {
-      alert("Bilgileri eksiksiz giriniz");
+      warningAlert("Bilgileri eksiksiz giriniz");
       return;
     }
     try {
       if (user?.password) {
-        alert("Kullanıcı önceden şifre oluşturmuş.");
+        warningAlert("Kullanıcı önceden şifre oluşturmuş.");
         return;
       }
-      await dispatch(signUp({ userName, password:newPassword, defaultPassword })).unwrap();
-      alert("Kullanıcı kayıt edildi. Giriş sayfasına yönlendiriliyorsunuz.");
+      await dispatch(signUp({ userName, password: newPassword, defaultPassword })).unwrap();
+      successAlert("Kullanıcı kayıt edildi. Giriş sayfasına yönlendiriliyorsunuz.");
       navigate("/");
     } catch (error) {
-      alert("Kullanıcı şifresi kayıt edilemedi");
-      console.error("SignUp Error:", error);
+      errorAlert("Kullanıcı şifresi kayıt edilemedi");
     }
   };
 
@@ -41,6 +42,7 @@ const NewPasswordPage = () => {
 
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center bg-amber-200">
+      {contextHolder}
       <div className="bg-amber-100 h-[350px] w-[280px] md:w-[350px] p-5 m-5 flex flex-col gap-3 rounded-md shadow-2xl">
         <hr />
         <header className="font-semibold text-[20px] self-center tracking-[0.5px]">New Current Password</header>

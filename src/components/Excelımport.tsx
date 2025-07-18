@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx'
 import { useDispatch } from 'react-redux'
 import { type AppDispatch } from '../redux/store'
 import { addProduct } from '../redux/slices/productSlice' // asyncThunk fonksiyonun
+import { useAlert } from '../functions/useAlert'
 
 // Excel'den okunan her satırın tipi
 interface ExcelProduct {
@@ -22,6 +23,7 @@ const convertBlobToBase64 = (blob: Blob): Promise<string> => {
 }
 
 const ExcelImport: React.FC = () => {
+    const {successAlert} = useAlert()
     const dispatch = useDispatch<AppDispatch>()
     const [file, setFile] = useState<File>()
 
@@ -61,7 +63,7 @@ const ExcelImport: React.FC = () => {
                 }))
             }
 
-            alert("Import işlemi başarılı")
+            successAlert("Import işlemi başarılı")
         }
 
         reader.readAsArrayBuffer(file)

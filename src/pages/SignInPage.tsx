@@ -3,8 +3,10 @@ import { useDispatch } from "react-redux"
 import { type AppDispatch } from "../redux/store"
 import { getUser, signIn } from '../redux/slices/userSlice';
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../functions/useAlert";
 
 const SignInPage = () => {
+    const { successAlert, warningAlert, errorAlert, contextHolder } = useAlert()
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
     const [userName, setUserName] = useState("")
@@ -12,15 +14,14 @@ const SignInPage = () => {
 
     const handleUserSignUp = async () => {
         if (!userName || !password) {
-            alert("bilgileri eksiksiz giriniz");
+            warningAlert("bilgileri eksiksiz giriniz");
             return;
         }
-
         try {
             const userEx = await dispatch(getUser({ userName })).unwrap();
             if (userEx?.password === password) {
                 await dispatch(signIn({ userName, password })).unwrap();
-                alert("Kullanıcı girişi yapıldı.");
+                successAlert("Kullanıcı girişi yapıldı.");
                 navigate("/");
                 window.location.reload();
                 return;
@@ -28,22 +29,21 @@ const SignInPage = () => {
 
             if (userEx?.defaultPassword === password && !userEx?.password) {
                 await dispatch(signIn({ userName, defaultPassword: password })).unwrap();
-                alert("Kullanıcı girişi yapıldı.");
+                successAlert("Kullanıcı girişi yapıldı.");
                 navigate("/user/signup");
                 window.location.reload();
                 return;
             }
 
-            alert("Şifre uyuşmuyor.");
+            warningAlert("Şifre uyuşmuyor.");
         } catch (error) {
-            console.log(error);
-            alert("Kullanıcı bulunamadı veya giriş hatası.");
+            errorAlert("Kullanıcı bulunamadı veya giriş hatası.");
         }
     };
 
-
     return (
         <div className="w-full h-screen flex flex-col justify-center items-center bg-amber-200">
+            {contextHolder}
             <div className="bg-amber-100 h-[280px] w-[280px] md:w-[350px] p-5 m-5 flex flex-col gap-3 rounded-md shadow-2xl">
                 <hr />
                 <header className="font-semibold text-[20px] self-center tracking-[0.5px]">Sign In</header>

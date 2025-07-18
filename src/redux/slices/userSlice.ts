@@ -15,6 +15,7 @@ interface UserState {
     createdUserError: string | undefined
     user: User | null
     currentUser: any
+    open: boolean
 }
 let userObject
 const storedUser = localStorage.getItem("user");
@@ -48,7 +49,8 @@ const initialState: UserState = {
         userName: "",
         status: ""
     },
-    currentUser: userObject
+    currentUser: userObject,
+    open:false
 }
 
 // aslında bir update fonksiyonu çünkü kullanıcı adı zaten önceden oluşturuluyor.
@@ -87,18 +89,17 @@ export const signOut = createAsyncThunk<User, { userName: string }>("user/signOu
         }
     })
 
-export const createUser = createAsyncThunk<
-    User, { userName: string; status: string; defaultPassword: string }>("user/createUser",
-        async ({ userName, status, defaultPassword }) => {
-            const { data: existingUsers, error: checkError } = await supabase.from("user").select("id").eq("userName", userName);
-            if (checkError) throw checkError.message;
-            if (existingUsers && existingUsers.length > 0) {
-                throw new Error("Kullanıcı adı zaten kayıtlı.");
-            }
-            const { data: user, error } = await supabase.from("user").insert([{ userName, status, defaultPassword }]).select().single();
-            if (error) throw error.message;
-            return user;
-        });
+//Yapıldı
+export const createUser = createAsyncThunk<User, { userName: string; status: string; defaultPassword: string }>("user/createUser",
+    async ({ userName, status, defaultPassword }) => {
+        const fakeEmail = `${userName}@yourapp.local`;
+        const { data, error } = await supabase.auth.admin.createUser({ email: fakeEmail, password: defaultPassword, email_confirm: true, });
+        if (error) throw error.message;
+        const { data: userProfile, error: userTableError } = await supabase.from("user").insert([{ id: data.user.id, userName, status, isDefaultPassword: true, },]).select().single();
+        if (userTableError) throw userTableError.message;
+        return userProfile;
+    });
+
 
 export const deleteUSer = createAsyncThunk<User[] | null, { userName: string }>("user/deleteUser",
     async ({ userName }) => {
@@ -133,7 +134,11 @@ export const updateUser = createAsyncThunk<User, User>("user/updateUser",
 const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {},
+    reducers: {
+        setOpen: (state) => {
+            state.open = !state.open
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(signUp.fulfilled, (state, action) => {
@@ -169,4 +174,6 @@ const userSlice = createSlice({
     }
 })
 
+
+export const {setOpen} = userSlice.actions
 export default userSlice.reducer

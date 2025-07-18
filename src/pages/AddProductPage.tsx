@@ -5,8 +5,10 @@ import { addProduct } from "../redux/slices/productSlice"
 import { convertFileToBase64 } from "../functions/convertBase64"
 import ExcelImport from "../components/Excelımport"
 import Found404Page from "./Found404Page"
+import { useAlert } from "../functions/useAlert"
 
 const AddProductPage = () => {
+    const {warningAlert , contextHolder } = useAlert()
     const dispatch = useDispatch<AppDispatch>()
     const [productName, setProductName] = useState<string>("")
     const [serialNo, setSerialNo] = useState<string>("")
@@ -19,13 +21,13 @@ const AddProductPage = () => {
             return
         }
         if(productName == "" && serialNo == ""){
-            alert("Ürün bilgilerini eksiksiz giriniz.")
+            warningAlert("Ürün bilgilerini eksiksiz giriniz.")
             return
         }
         const fileName = file.name
         const extension = fileName.split('.').pop()?.toLowerCase();
         if (extension != "png" && extension != "jpeg" && extension != "jpg") {
-            alert("seçilen dosya png, jpeg, jpg formatında olabilir")
+            warningAlert("seçilen dosya png, jpeg, jpg formatında olabilir")
             return
         }
         const base64Convert = await convertFileToBase64(file)
@@ -35,6 +37,7 @@ const AddProductPage = () => {
     return (
           ["Master Admin"].includes(currentUser?.status)
             ? <div className="w-full bg-amber-50 p-4">
+                {contextHolder}
                 <div className=" flex flex-col gap-4">
                     <div className="mb-5">
                         <p className="font-semibold text-[18px]">Add Product</p>

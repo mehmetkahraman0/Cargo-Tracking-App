@@ -7,8 +7,11 @@ import type { TableColumnsType } from 'antd';
 import type { Product } from '../models/Product';
 import { MdDeleteOutline } from 'react-icons/md';
 import Found404Page from './Found404Page';
+import { useAlert } from '../functions/useAlert';
 
 const ProductListPage = () => {
+  const { successAlert, contextHolder } = useAlert()
+
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.product.products);
   const getLoading = useSelector((state: RootState) => state.product.getLoading)
@@ -53,7 +56,7 @@ const ProductListPage = () => {
     try {
       if (product.id) {
         await dispatch(deleteProduct(product.id)).unwrap()
-        alert(`${product.productName} silindi !!`)
+        successAlert(`${product.productName} silindi !!`)
         await dispatch(getProduct()).unwrap();
       }
     } catch (error: any) {
@@ -67,6 +70,7 @@ const ProductListPage = () => {
   return (
     ["Master Admin", "Admin"].includes(currentUser?.status)
       ? <div className='w-full p-7'>
+        {contextHolder}
         <h1 className='text-xl font-bold mb-2 tracking-[1px]'>Product List</h1>
         <hr className='mb-4' />
         {getLoading
