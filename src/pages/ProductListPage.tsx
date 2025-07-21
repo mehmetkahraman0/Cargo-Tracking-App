@@ -2,16 +2,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { deleteProduct, getProduct } from '../redux/slices/productSlice';
 import { type AppDispatch, type RootState } from '../redux/store';
-import { Table, Image } from 'antd';
+import { Table, Image, Button } from 'antd';
 import type { TableColumnsType } from 'antd';
 import type { Product } from '../models/Product';
-import { MdDeleteOutline } from 'react-icons/md';
+import { MdAdd, MdDeleteOutline } from 'react-icons/md';
 import Found404Page from './Found404Page';
 import { useAlert } from '../functions/useAlert';
+import ExcelImport from '../components/Excelımport';
+import { useNavigate } from 'react-router-dom';
 
 const ProductListPage = () => {
   const { successAlert, contextHolder } = useAlert()
-
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.product.products);
   const getLoading = useSelector((state: RootState) => state.product.getLoading)
@@ -71,6 +73,15 @@ const ProductListPage = () => {
     ["Master Admin", "Admin"].includes(currentUser?.status)
       ? <div className='w-full p-7'>
         {contextHolder}
+        <div className=" flex flex-col mb-10">
+          <div className='flex flex-row justify-between'>
+            <p className="text-xl font-bold mb-2 tracking-[1px]">Add Product</p>
+            <Button onClick={()=>navigate("/product-add")}><MdAdd /></Button>
+          </div>
+          <hr className='mb-2'/>
+          <ExcelImport />
+          <hr className='my-2'/>
+        </div>
         <h1 className='text-xl font-bold mb-2 tracking-[1px]'>Product List</h1>
         <hr className='mb-4' />
         {getLoading
